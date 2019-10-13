@@ -111,7 +111,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         print("APNs token retrieved: \(deviceToken)")
         
         // With swizzling disabled you must set the APNs token here.
-        // Messaging.messaging().apnsToken = deviceToken
+        Messaging.messaging().apnsToken = deviceToken
+        
+        Messaging.messaging().subscribe(toTopic: "testm") { error in
+            print("Subscribed to testm topic")
+        }
     }
 
 
@@ -128,7 +132,7 @@ extension AppDelegate : UNUserNotificationCenterDelegate {
         let userInfo = notification.request.content.userInfo
         
         // With swizzling disabled you must let Messaging know about the message, for Analytics
-        // Messaging.messaging().appDidReceiveMessage(userInfo)
+         Messaging.messaging().appDidReceiveMessage(userInfo)
         // Print message ID.
         if let messageID = userInfo[gcmMessageIDKey] {
             print("Message ID: \(messageID)")
@@ -168,9 +172,7 @@ extension AppDelegate: MessagingDelegate{
         // TODO: If necessary send token to application server.
         // Note: This callback is fired at each app startup and whenever a new token is generated.
         
-        Messaging.messaging().subscribe(toTopic: "testm") { error in
-            print("Subscribed to weather topic")
-        }
+       
     }
     
     
