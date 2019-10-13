@@ -9,5 +9,6 @@ target 'MessagingDemo' do
 
   # Pods for MessagingDemo
   pod 'Firebase/Analytics'
+  pod 'Firebase/Messaging'
 
 end
