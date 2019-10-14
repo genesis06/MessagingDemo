@@ -15,6 +15,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
     let gcmMessageIDKey = "gcm.message_id"
+    var message = "Este es un mensaje de notificación"
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
@@ -75,9 +76,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if let messageID = userInfo[gcmMessageIDKey] {
             print("Message ID: \(messageID)")
         }
-        
-        // Print full message.
-        print(userInfo)
     }
     
     func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable: Any],
@@ -93,9 +91,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if let messageID = userInfo[gcmMessageIDKey] {
             print("Message ID: \(messageID)")
         }
-        
-        // Print full message.
-        print(userInfo)
         
         completionHandler(UIBackgroundFetchResult.newData)
     }
@@ -133,14 +128,15 @@ extension AppDelegate : UNUserNotificationCenterDelegate {
         
         // With swizzling disabled you must let Messaging know about the message, for Analytics
          Messaging.messaging().appDidReceiveMessage(userInfo)
-        // Print message ID.
-        if let messageID = userInfo[gcmMessageIDKey] {
-            print("Message ID: \(messageID)")
+        
+        
+        if let newMessage = userInfo["message"] {
+            message = newMessage as! String
         }
         
-        // Print full message.
-        print(userInfo)
-        
+        let dataDict = ["message": message]
+        NotificationCenter.default.post(name: NSNotification.Name("FCMNotification"), object: nil, userInfo: dataDict as [String: String])
+
         // Change this to your preferred presentation option
         completionHandler([])
     }
@@ -148,14 +144,15 @@ extension AppDelegate : UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter,
                                 didReceive response: UNNotificationResponse,
                                 withCompletionHandler completionHandler: @escaping () -> Void) {
+        
         let userInfo = response.notification.request.content.userInfo
-        // Print message ID.
-        if let messageID = userInfo[gcmMessageIDKey] {
-            print("Message ID: \(messageID)")
+        
+        if let newMessage = userInfo["message"] {
+            message = newMessage as! String
         }
         
-        // Print full message.
-        print(userInfo)
+        let dataDict = ["message": message]
+        NotificationCenter.default.post(name: NSNotification.Name("FCMNotification"), object: nil, userInfo: dataDict as [String: String])
         
         completionHandler()
     }
