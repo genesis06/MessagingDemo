@@ -16,7 +16,23 @@ class ViewController: UIViewController {
         
         NotificationCenter.default.addObserver(self, selector: #selector(self.displayMessage(notification:)),
                                                name: Notification.Name("FCMNotification"), object: nil)
+       
+       
     }
+    
+    
+    @IBAction func openURL(_ sender: UIButton) {
+        
+        let url = URL(string: "messagingApp:Vacation?message=URL_abierto_desde_la_aplicacion")
+        
+        UIApplication.shared.open(url!) { (result) in
+            if result {
+                // The URL was delivered successfully!
+                print(result)
+            }
+        }
+    }
+    
     
     @objc func displayMessage(notification: NSNotification){
         
@@ -24,6 +40,7 @@ class ViewController: UIViewController {
         
         if let message = userInfo["message"] as? String{
             
+           
             let messageAlert = UIAlertController(title: "Notificación", message: message, preferredStyle: .alert)
             let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
             

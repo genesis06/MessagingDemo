@@ -112,6 +112,64 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             print("Subscribed to testm topic")
         }
     }
+    
+    func application(_ application: UIApplication,
+                     open url: URL,
+                     options: [UIApplication.OpenURLOptionsKey : Any] = [:] ) -> Bool {
+        
+        // Determine who sent the URL.
+        let sendingAppID = options[.sourceApplication]
+        print("source application = \(sendingAppID ?? "Unknown")")
+
+        // Process the URL.
+        guard let components = NSURLComponents(url: url, resolvingAgainstBaseURL: true)
+             else {
+                print("Invalid URL")
+                return false
+        }
+        
+        var msg = ""
+        
+        if let host = components.host{
+            msg += "Host: \((host == "" ? "No tiene" : host ))\n"
+        }
+        
+        if let path = components.path{
+            msg += "Path: \(path == "" ? "No tiene" : path)\n"
+        }
+        if let params = components.queryItems{
+             msg += "Query items: \(params)\n"
+        }
+    
+        let dataDict = ["message": msg, "isScheme": true] as [String : Any]
+        
+        let messageAlert = UIAlertController(title: "URL Scheme", message: msg, preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+        
+        messageAlert.addAction(okAction)
+        self.window?.rootViewController?.present(messageAlert, animated: true)
+
+        
+        return true
+    }
+    
+    public func application(_ application: UIApplication,
+                            continue userActivity: NSUserActivity,
+                            restorationHandler: @escaping ([Any]?) -> Void) -> Bool {
+        if let url = userActivity.webpageURL {
+            var view = url.lastPathComponent
+            var parameters: [String: String] = [:]
+            URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems?.forEach {
+                parameters[$0.name] = $0.value
+            }
+            
+//            redirect(to: view, with: parameters)
+            
+            print("VIEW: \(view)")
+        }
+        return true
+    }
+
 
 
 }
